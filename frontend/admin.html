@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WESTPRIME CONFESSIONS - Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-page" data-page="admin">
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div class="brand-title">
+          <h1>ADMIN DASHBOARD</h1>
+          <p>WESTPRIME CONFESSIONS Moderation</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button type="button" class="btn btn-outline" id="adminLogoutBtn">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ADMIN LOGIN GATE -->
+    <div class="auth-card admin-auth-card" id="adminGate">
+      <div class="admin-card-heading">
+        <span class="admin-card-icon"><i class="fa-solid fa-key" aria-hidden="true"></i></span>
+        <div>
+          <h2>Administrator Access</h2>
+          <p>Sign in to manage the WESTPRIME CONFESSIONS community.</p>
+        </div>
+      </div>
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminPasswordInput">Admin Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="adminPasswordInput" placeholder="Enter administrative password" autocomplete="current-password" required>
+            <button type="button" class="password-toggle" data-password-toggle aria-controls="adminPasswordInput" aria-label="Show password" aria-pressed="false">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-yellow admin-unlock-button">
+          <i class="fa-solid fa-lock-open" aria-hidden="true"></i> Unlock Panel
+        </button>
+      </form>
+      <p class="admin-security-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Authorized administrators only</p>
+    </div>
+
+    <!-- ADMIN PANEL CONTENT (Hidden until authenticated) -->
+    <div class="admin-panel hidden" id="adminPanel">
+      <div class="admin-panel-toolbar">
+        <div>
+          <div class="section-title">
+            <i class="fa-solid fa-list-check"></i> Manage Confessions
+          </div>
+          <p class="admin-panel-description">Review community posts and remove anything that doesn't belong.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+          <label class="admin-filter-label" for="adminPeriodFilter">Date range</label>
+          <select class="admin-period-filter" id="adminPeriodFilter">
+            <option value="all">All time</option>
+            <option value="week">Last 7 days</option>
+            <option value="month">Last 30 days</option>
+            <option value="3months">Last 3 months</option>
+            <option value="6months">Last 6 months</option>
+            <option value="custom">Custom range</option>
+          </select>
+          <span class="admin-feed-count" id="adminFeedCount" aria-live="polite">Loading entries</span>
+        </div>
+      </div>
+      <div class="admin-custom-range hidden" id="adminCustomRange">
+        <label>
+          <span>From</span>
+          <input type="date" id="adminDateFrom">
+        </label>
+        <label>
+          <span>To</span>
+          <input type="date" id="adminDateTo">
+        </label>
+        <button class="btn btn-yellow" type="button" id="applyAdminDateRange">
+          <i class="fa-solid fa-filter" aria-hidden="true"></i> Apply dates
+        </button>
+      </div>
+
+      <div class="feed-container" id="adminFeedContainer">
+        <!-- Moderation items loaded dynamically -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 WESTPRIME CONFESSIONS. All Rights Reserved.</p>
+    <p class="footer-links"><a href="contact.html">Contact us</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

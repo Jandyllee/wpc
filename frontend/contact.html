@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact the WESTPRIME CONFESSIONS team with questions, feedback, or support requests.">
+  <meta name="referrer" content="no-referrer">
+  <title>Contact Us - WESTPRIME CONFESSIONS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="contact-page" data-page="contact">
+  <header>
+    <div class="nav-container">
+      <a class="brand-logo contact-brand" href="index.html">
+        <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+        <span class="brand-title">
+          <span class="contact-brand-title">WESTPRIME CONFESSIONS</span>
+          <span class="contact-brand-subtitle">Campus Portal &amp; Community</span>
+        </span>
+      </a>
+      <div class="nav-actions">
+        <a href="index.html" class="btn btn-outline"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to login</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="contact-main">
+    <section class="contact-card">
+      <div class="contact-intro">
+        <span class="contact-icon"><i class="fa-regular fa-paper-plane" aria-hidden="true"></i></span>
+        <p class="contact-eyebrow">WE’RE HERE TO HELP</p>
+        <h1>Get in touch</h1>
+        <p>Have a question, suggestion, or need help? Send the WESTPRIME CONFESSIONS team a message.</p>
+        <div class="contact-note">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          <span>Your message is sent securely. We’ll reply to the email address you provide.</span>
+        </div>
+      </div>
+
+      <div id="contactStatus" class="form-status hidden" role="status" aria-live="polite"></div>
+      <form class="contact-form" id="contactForm">
+        <div class="contact-form-row">
+          <div class="form-group">
+            <label for="contactName">Your name</label>
+            <input id="contactName" name="name" type="text" autocomplete="name" maxlength="100" required>
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email address</label>
+            <input id="contactEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="contactSubject">Subject</label>
+          <input id="contactSubject" name="subject" type="text" maxlength="150" required>
+        </div>
+        <div class="form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" name="message" rows="5" maxlength="10000" minlength="10" required></textarea>
+          <span class="contact-field-hint">Please include at least 10 characters.</span>
+        </div>
+        <div class="contact-honeypot" aria-hidden="true">
+          <label for="contactWebsite">Leave this field empty</label>
+          <input id="contactWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-yellow contact-submit">
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Send message
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 WESTPRIME CONFESSIONS. All Rights Reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

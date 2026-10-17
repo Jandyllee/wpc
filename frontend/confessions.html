@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Westprime Diaries - Live Confessions Feed</title>
+  <title>WESTPRIME CONFESSIONS - Live Confessions Feed</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=character-counter-20261017">
 </head>
 <body data-page="confessions">
 
@@ -16,7 +16,7 @@
       <div class="brand-logo">
         <i class="fa-solid fa-book-bookmark"></i>
         <div class="brand-title">
-          <h1>WESTPRIME DIARIES</h1>
+          <h1>WESTPRIME CONFESSIONS</h1>
           <p>Campus Confessions</p>
         </div>
       </div>
@@ -34,18 +34,28 @@
     </div>
   </header>
 
-  <!-- SINGLE-COLUMN SCROLLABLE FEED CONTAINER -->
+  <!-- CONFESSION COMPOSER AND RESPONSIVE FEED -->
   <div class="main-container scrollable-feed">
 
     <!-- POST FORM SECTION (TOP) -->
     <section class="widget post-widget">
       <div class="widget-title"><i class="fa-solid fa-pen-nib"></i> Post New Confession</div>
       <form class="quick-post-form" id="confessionForm">
-        <input type="text" id="postTagInput" placeholder="To / Tag (e.g. To STEM-A, Crush)" required>
-        <textarea id="postContentInput" rows="4" placeholder="Write your confession here..." required></textarea>
-        <button type="submit" class="btn btn-yellow" style="width: 100%; justify-content: center;">
-          <i class="fa-solid fa-paper-plane"></i> Publish Entry
-        </button>
+        <div class="post-composer-controls">
+          <input type="text" id="postTagInput" placeholder="To / Tag (e.g. To STEM-A, Crush)" required>
+          <label class="anonymous-option" for="postAnonymousInput">
+            <input type="checkbox" id="postAnonymousInput">
+            <span>Post anonymously</span>
+            <small>Your username will still be visible to admins.</small>
+          </label>
+          <button type="submit" class="btn btn-yellow">
+            <i class="fa-solid fa-paper-plane"></i> Publish Entry
+          </button>
+        </div>
+        <div class="post-content-field">
+          <textarea id="postContentInput" rows="3" placeholder="Write your confession here..." required></textarea>
+          <p class="post-character-count" id="postCharacterCount" aria-live="polite">0 / 1,000 characters</p>
+        </div>
       </form>
     </section>
 
@@ -53,6 +63,7 @@
     <main class="feed-section">
       <div class="section-title">
         <i class="fa-solid fa-comments"></i> Confessions Feed
+        <span class="feed-count" id="feedCount" aria-live="polite"></span>
       </div>
 
       <div class="feed-container" id="feedContainer">
@@ -63,9 +74,11 @@
   </div>
 
   <footer>
-    <p>&copy; 2026 Westprime Diaries. All Rights Reserved.</p>
+    <p>&copy; 2026 WESTPRIME CONFESSIONS. All Rights Reserved.</p>
+    <p class="footer-links"><a href="contact.html">Contact us</a></p>
   </footer>
 
-  <script src="main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="assets/js/main.js?v=publish-lock-20261017"></script>
 </body>
 </html>

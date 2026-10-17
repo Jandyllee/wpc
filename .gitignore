@@ -1,0 +1,11 @@
+# Local secrets and private deployment configuration
+.env
+.env.*
+!.env.example
+wpc-private-config.php
+
+# Deployment artifacts and local logs
+*.zip
+*.log
+/PHPMailer/
+/Capstone-Project-Rubric-website.docx
