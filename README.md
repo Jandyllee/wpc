@@ -1,89 +1,138 @@
 # WESTPRIME CONFESSIONS
 
-WESTPRIME CONFESSIONS is a PHP and MySQL confession-sharing site. The frontend is
-kept separate from the PHP backend and database setup files.
+WESTPRIME CONFESSIONS is a responsive confession-sharing website. Students can
+register, sign in, browse and search posts, and publish with an optional
+anonymous display name. An administrator can review, filter, and delete posts.
+The application has a static HTML frontend that talks to a PHP JSON API; it
+does not use a JavaScript framework or a frontend build step.
 
-## Live deployment
+## Live deployment and repository
 
-- **Live website:** [https://westprimeconfessions.online/](https://westprimeconfessions.online/)
-- **Domain registrar:** Hostinger
-- **Hosting provider:** Hostinger (PHP website hosting)
-- **Application stack:** PHP, MySQL, HTML, CSS, and JavaScript
-- **Database:** MySQL
-- **HTTPS:** The production SSL certificate was reported active. Confirm HTTPS
-  redirection and check for mixed-content warnings before the live evaluation.
+- **Website:** [https://westprimeconfessions.online/](https://westprimeconfessions.online/)
+- **Domain and hosting provider:** Hostinger (as reported by the project owner)
 - **Source repository:** [github.com/Jandyllee/wpc](https://github.com/Jandyllee/wpc)
+- **Deployment guide:** [HOSTINGER.md](./HOSTINGER.md)
+- **Admin provisioning guide:** [HOSTINGER-ADMIN-SETUP.md](./HOSTINGER-ADMIN-SETUP.md)
 
-Never put database, hosting, email, or demo-account passwords in this README or
-in a public repository. Provide evaluator demo access separately and securely.
-Use a limited read-only/demo account where the application supports one.
+The live URL and provider details are project deployment information, not a
+claim that every production health, DNS, email, or performance check has
+recently passed. See the deployment guide for recorded and still-pending checks.
 
-## Project structure
+## Technology stack
+
+| Layer | Technologies used |
+|---|---|
+| Frontend markup | HTML5 |
+| Styling | Custom responsive CSS; no CSS framework is used. |
+| Browser logic | Vanilla JavaScript using `fetch`, `URLSearchParams`, and the browser DOM; no frontend package manager or build/bundling step is configured. |
+| PHP application | PHP JSON API in `backend/api.php`; PHP sessions handle login state. Database access uses the `mysqli` extension and prepared statements. |
+| Database | MySQL-compatible database (MySQL/MariaDB on XAMPP/Hostinger), InnoDB tables, and `utf8mb4` character encoding/collation. |
+| Email | PHPMailer 6.9.1, bundled in `vendor/PHPMailer`; SMTP settings are supplied by server environment or private configuration. |
+| UI helpers loaded from CDNs | SweetAlert2 11, Font Awesome 6.4.0, and Google Fonts Poppins. A network connection is required for these externally hosted assets. |
+| Local environment | XAMPP on Windows (the local PHP CLI used during development was PHP 8.2.12). |
+| Production hosting | Hostinger PHP hosting with Apache `.htaccess` rules. Confirm that the selected plan supports the required PHP extensions and Apache directives. |
+
+The application does not use Laravel, React, Vue, Bootstrap, Tailwind, npm, or
+Composer as a project build/install workflow. PHPMailer is included directly
+and loaded by PHP; Composer is not needed to run the current application.
+
+## Features
+
+- Student registration and login. User passwords are stored as hashes using
+  PHP's `password_hash()` and checked with `password_verify()`.
+- Required, lowercased email addresses with a unique database index. Duplicate
+  registration attempts return an existing-account error.
+- Session-based authentication for students and an administrator. The current
+  admin login expects the username `admin`; see the admin setup guide.
+- Confession feed, text/tag search, optional anonymous display, and admin view
+  of the original account name for anonymous posts.
+- Confessions are limited to 1,000 Unicode characters by both the browser
+  composer and API. The live counter includes spaces; server-side validation
+  is authoritative.
+- Posts longer than 30 words are collapsed in the student and admin feeds and
+  can be expanded.
+- Admin moderation: delete posts and filter by all posts, recent time periods,
+  or a custom inclusive date range.
+- Email password recovery with a six-digit code, ten-minute expiry, single use,
+  a five-attempt limit, and a one-minute interval between requests for the same
+  account. SMTP must be configured and tested on the target host for delivery
+  to work.
+- Contact form with server-side validation, a honeypot field, per-session
+  repeat-submission delay, and SMTP delivery to the configured mailbox.
+- POST API requests require a session-bound CSRF token. Session cookies are
+  configured as HTTP-only and SameSite=Lax; Secure is enabled when the request
+  is recognized as HTTPS.
+
+The publish form also ignores repeated submit events while its current request
+is pending and disables its button. This is a browser-side duplicate-click
+guard, not a server-wide idempotency or anti-spam guarantee.
+
+## Project layout
 
 ```text
-frontend/
-  index.html
-  confessions.html
-  admin.html
-  contact.html
-  assets/
-    css/style.css
-    js/main.js
-backend/
-  api.php
-  config/db.php
-  database/schema.sql
+.
+├── index.html                   # Root redirect to the frontend
+├── .htaccess                    # Apache access restrictions and headers
+├── frontend/
+│   ├── index.html               # Student login and registration
+│   ├── confessions.html         # Authenticated student feed and composer
+│   ├── admin.html               # Admin login and moderation dashboard
+│   ├── contact.html             # Contact form
+│   ├── forgot_password.html     # Password recovery entry point
+│   └── assets/
+│       ├── css/style.css        # Responsive application styles
+│       └── js/main.js           # Frontend behavior and API client
+├── backend/
+│   ├── api.php                  # JSON API actions
+│   ├── config/db.php            # Database and private-config loader
+│   └── database/schema.sql      # Tables and schema migrations
+├── vendor/PHPMailer/            # Bundled mail library (required for SMTP)
+├── screenshot/                  # Redacted Hostinger documentation images
+├── HOSTINGER.md                 # Deployment guide and status log
+├── HOSTINGER-ADMIN-SETUP.md     # Safe admin provisioning guide
+└── README.md
 ```
 
-The repository root `index.html` forwards visitors to the frontend. The site
-and API are set up for local XAMPP development at `http://localhost/wpc/`.
+## Requirements
 
-## Database setup
+- Apache with PHP and `.htaccess` support for local XAMPP use or deployment.
+- PHP with `mysqli`, `mbstring`, sessions, and standard password/security
+  functions enabled. PHP's `mysqli` must support `get_result()` (commonly
+  provided by mysqlnd).
+- MySQL or compatible MariaDB with InnoDB and `utf8mb4` support.
+- A browser with JavaScript enabled.
+- SMTP credentials and network access to the mail provider only if contact
+  delivery and password-recovery email are to be used.
 
-1. Start Apache and MySQL in the XAMPP Control Panel.
-2. Create a database named `wpc` in phpMyAdmin, select it, then import
+The project was developed locally on XAMPP with PHP 8.2.12. No formal minimum
+PHP or MySQL version is declared by this project; use a currently supported
+host version that provides the required extensions and test it before launch.
+
+## Local setup with XAMPP
+
+1. Place the project folder at `C:\xampp\htdocs\wpc`.
+2. Start **Apache** and **MySQL** in the XAMPP Control Panel.
+3. Open phpMyAdmin, create a database named `wpc`, select it, and import
    `backend/database/schema.sql`.
-   This same SQL file also adds the email column to an existing `users` table,
-   enforces one account per email address, adds the anonymous-post setting to
-   an existing `confessions` table, and creates the password-reset table, so
-   it can be re-imported safely.
-3. Open `http://localhost/wpc/` in your browser. Do not open the HTML files
-   directly from the filesystem; PHP sessions and API requests require Apache.
-4. Configure the SMTP and public application URL environment variables
-   described below. On this XAMPP installation, these are set in
-   `C:\xampp\apache\conf\extra\httpd-xampp.conf`; restart Apache from the
-   XAMPP Control Panel after changing them. Do not put SMTP credentials in
-   source control.
-5. The default local MySQL connection in `backend/config/db.php` uses
-   `127.0.0.1`, username `root`, and a blank password. Change those values if
-   your local MySQL setup uses different credentials.
+4. The local defaults in `backend/config/db.php` are host `127.0.0.1`,
+   username `root`, blank password, and database `wpc`. Override them with
+   `WPC_DB_HOST`, `WPC_DB_USER`, `WPC_DB_PASSWORD`, and `WPC_DB_NAME` if the
+   local database uses different settings.
+5. Visit [http://localhost/wpc/](http://localhost/wpc/). Do not open HTML files
+   directly from disk: the application needs Apache to serve the PHP API and
+   maintain PHP sessions.
+6. SMTP is optional for other local development. To exercise contact delivery
+    or password recovery locally, configure the `WPC_SMTP_*` settings in the
+    Apache environment used by XAMPP. The private PHP config is loaded only for
+    non-local web hosts. Never put real credentials in a tracked file.
 
-The schema creates the `users` and `confessions` tables but does not seed an
-admin account. Create an admin account explicitly using a securely generated
-password hash. For the detailed Hostinger admin-account provisioning and
-launch checklist, see
-[HOSTINGER-ADMIN-SETUP.md](./HOSTINGER-ADMIN-SETUP.md).
-
-The admin dashboard can filter confessions by the last 7 days, last 30 days,
-last 3 months, last 6 months, or a custom inclusive date range. The filters run
-against the database; the user-facing feed remains unfiltered.
-
-Users can choose to post a confession anonymously. Their username is hidden
-from other users, while admins can still see the account name in the moderation
-dashboard.
-
-Confession text longer than 30 words is collapsed by default in both the
-student feed and admin dashboard, with a control to expand or collapse it.
-New confessions are limited to 1,000 characters (spaces included); the composer
-shows a live character count inside the text box and the API enforces the same
-limit.
-
-New user accounts must include an email address for password recovery. The
-same email address cannot be registered to multiple accounts, and email
-addresses are stored in lowercase. Registration gives an existing-user error
-with a link to the login and password-recovery flows. Before applying the email
-uniqueness migration to a database that already has user accounts, check for
-duplicate addresses and resolve them without deleting accounts unexpectedly:
+The checked-in SQL creates or updates the `users`, `confessions`, and
+`password_resets` structures; it also normalizes existing emails and adds
+unique constraints/migration columns when absent. **Before running it against
+an existing database**, back up the database and check for duplicate normalized
+emails using the query below. The unique-index migration will fail if duplicate
+non-NULL email values remain; resolve them deliberately rather than deleting
+accounts unexpectedly.
 
 ```sql
 SELECT LOWER(TRIM(email)) AS normalized_email, COUNT(*) AS account_count
@@ -93,82 +142,96 @@ GROUP BY LOWER(TRIM(email))
 HAVING COUNT(*) > 1;
 ```
 
-The forgot-password flow emails a six-digit verification code through SMTP using
-PHPMailer in `vendor/`. Codes expire after 10 minutes, are single-use, and
-allow up to five attempts, with at least one minute between code requests.
-After code verification, the user can set a new password in a modal. No reset
-code is exposed in the browser. Configure these values as PHP environment
-variables or add them to the private `wpc-private-config.php` file outside
-`public_html` before requesting a code:
+The schema intentionally does not seed an administrator account. Provision one
+explicitly with a locally generated password hash by following
+[HOSTINGER-ADMIN-SETUP.md](./HOSTINGER-ADMIN-SETUP.md).
 
-- `WPC_SMTP_HOST`: your provider's SMTP server
-- `WPC_SMTP_PORT`: usually `587` for TLS or `465` for SSL
-- `WPC_SMTP_USERNAME` and `WPC_SMTP_PASSWORD`: SMTP credentials or app password
-- `WPC_SMTP_FROM_EMAIL`: a sender address authorized by that SMTP account
-- `WPC_SMTP_FROM_NAME`: optional sender display name
-- `WPC_SMTP_ENCRYPTION`: `tls` (default) or `ssl`
+## Configuration
 
-For production, configure these database values as PHP environment variables
-or in a private PHP configuration file named `wpc-private-config.php` placed
-in the directory immediately above `public_html` (never inside the website's
-public directory):
+The database loader first checks process environment variables. On a named
+production host it can also load `wpc-private-config.php` from the directory immediately above the web document
+root (for example, beside `public_html`).
+Production database settings are required; they are not embedded in this
+repository.
 
-- `WPC_DB_HOST`: Hostinger database host
-- `WPC_DB_NAME`: production database name
-- `WPC_DB_USER`: restricted production database user
-- `WPC_DB_PASSWORD`: that database user's password
+Supported settings:
 
-The private PHP file must return an associative array with those keys and
-quoted string values. Keep it outside the public web root, do not commit or
-upload it into `public_html`, and do not share its contents. Include the
-following mail settings in the same array when using SMTP:
+| Setting | Required | Purpose |
+|---|---:|---|
+| `WPC_DB_HOST` | Yes | MySQL/MariaDB host |
+| `WPC_DB_NAME` | Yes | Application database |
+| `WPC_DB_USER` | Yes | Database account |
+| `WPC_DB_PASSWORD` | Yes | Database account password |
+| `WPC_SMTP_HOST` | For email | SMTP server hostname |
+| `WPC_SMTP_PORT` | For email | SMTP port; defaults to `587` |
+| `WPC_SMTP_USERNAME` | For email | SMTP login and contact recipient |
+| `WPC_SMTP_PASSWORD` | For email | SMTP password/app password |
+| `WPC_SMTP_FROM_EMAIL` | For email | Authorized sender address |
+| `WPC_SMTP_FROM_NAME` | Optional | Sender display name; defaults to `WESTPRIME CONFESSIONS` |
+| `WPC_SMTP_ENCRYPTION` | For email | `tls` or `ssl`; defaults to `tls` |
+
+When using SMTP, use the exact host, port, sender, and encryption method
+provided by the mail provider. Store these values in the host's environment or
+private PHP config. Do not use database/hosting credentials as a mailbox
+password. No public application URL setting is currently read by the code.
+
+Example format with placeholders only—replace these locally, and never commit
+the real values:
 
 ```php
 <?php
 return [
-    'WPC_DB_HOST' => 'localhost',
-    'WPC_DB_NAME' => 'your_full_database_name',
-    'WPC_DB_USER' => 'your_full_database_username',
+    'WPC_DB_HOST' => 'your_database_host',
+    'WPC_DB_NAME' => 'your_database_name',
+    'WPC_DB_USER' => 'your_database_username',
     'WPC_DB_PASSWORD' => 'your_database_password',
-    'WPC_SMTP_HOST' => 'your_provider_smtp_hostname',
+    'WPC_SMTP_HOST' => 'your_smtp_host',
     'WPC_SMTP_PORT' => '587',
-    'WPC_SMTP_USERNAME' => 'your_mailbox_address',
+    'WPC_SMTP_USERNAME' => 'your_mailbox_username',
     'WPC_SMTP_PASSWORD' => 'your_mailbox_password',
-    'WPC_SMTP_FROM_EMAIL' => 'your_mailbox_address',
+    'WPC_SMTP_FROM_EMAIL' => 'your_verified_sender_address',
     'WPC_SMTP_FROM_NAME' => 'WESTPRIME CONFESSIONS',
     'WPC_SMTP_ENCRYPTION' => 'tls',
 ];
 ```
 
-Use the exact SMTP host, port, and encryption listed by the selected mail
-provider. Create/verify the sending mailbox first; never use database or
-Hostinger account credentials as the mailbox password.
+Keep `wpc-private-config.php` outside `public_html`. The repository `.gitignore`
+excludes that filename, environment files, and deployment ZIPs, but still
+review `git status` before committing. If SMTP settings are missing or invalid,
+email endpoints return an error; password recovery does not reveal the code in
+the browser. Existing accounts without a valid email address need their email
+updated by an administrator before recovery can be used.
 
-The root `.htaccess` adds security headers and blocks direct web access to
-configuration, schema, dependency, and screenshot directories. Keep the
-project's `.htaccess` enabled on Apache hosting, and enable HTTPS/force HTTPS
-in Hostinger after the certificate is active. The API uses session-bound CSRF
-tokens for POST requests. New registrations and password resets require
-12–72-character passwords; existing accounts can continue to sign in with
-their current passwords.
+## Security and deployment notes
 
-SMTP credentials are intentionally not included in the repository. If the
-SMTP settings are missing or email delivery fails, the API reports an error
-and does not expose the verification code. Configure a working SMTP provider
-to enable password recovery.
+- API write actions require POST and a matching session CSRF token.
+- Database writes use prepared statements; form values are validated by the
+  server. Rendered user-controlled text is escaped by the frontend.
+- The registration interface requests 12-72-character passwords; the API
+  enforces a length of 12-72 bytes. Existing accounts can still log in with
+  their existing password.
+- `.htaccess` blocks direct access to selected sensitive directories and
+  document/config/archive extensions and sets headers including CSP,
+  X-Content-Type-Options, X-Frame-Options, Referrer-Policy,
+  Permissions-Policy, and conditional HSTS. These Apache rules must be
+  supported and verified on the production host.
+- Enable/verify HTTPS in Hostinger. Do not assume SSL status alone proves
+  HTTP-to-HTTPS redirection or absence of mixed-content warnings.
+- Errors returned to API clients are generic; server-side errors are written
+  to the PHP error log. Protect those logs and do not publish them without
+  redacting private details.
+- The project does not provide a separate read-only student role. Evaluator
+  access should use an approved demo student account and be shared securely;
+  the student role can publish posts.
 
-Accounts without a valid email address cannot use password recovery. Add an
-email address to older accounts before relying on this feature.
+## Verification
 
-## Contact form
-
-The public contact page is linked from the site footers. It validates messages
-and sends them through the configured PHPMailer SMTP connection. Contact
-messages are delivered to `WPC_SMTP_USERNAME`; replies go to the visitor's
-validated email address. Keep SMTP credentials outside source control and
-configure the same SMTP values in the private PHP config or Hostinger's PHP
-environment before deployment. The form has a hidden bot-trap field and
-limits repeat submissions from the same session.
+There is no automated test runner or build command configured in this
+repository. For changes, use PHP lint on changed PHP files and perform focused
+browser/API checks. Before a capstone demo, verify login/logout, registration,
+feed and post behavior, anonymous display, admin filters/deletion, password
+recovery and contact email if configured, responsive layouts, and HTTPS on the
+live site. Record results rather than claiming tests that were not performed.
 
 ## Capstone project rubric: Website Publishing (Domain Name & Hosting)
 
